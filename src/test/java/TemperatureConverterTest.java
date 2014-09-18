@@ -2,14 +2,14 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class ApplicationTest {
-    private Application app;
+public class TemperatureConverterTest {
+    private TemperatureConverter app;
     private FakeReadWriter fakeReader;
     private FakeReadWriter fakeWriter;
 
     @Before
     public void setUp() {
-        app = new Application();
+        app = new TemperatureConverter();
         fakeReader = new FakeReadWriter();
         fakeWriter = new FakeReadWriter();
         app.setReader(fakeReader);
