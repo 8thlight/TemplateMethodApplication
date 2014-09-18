@@ -3,36 +3,40 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class TemperatureConverterTest {
-    private TemperatureConverter app;
+    private TemperatureConverter temperatureConverter;
+    private ApplicationRunner applicationRunner;
+
     private FakeReadWriter fakeReader;
     private FakeReadWriter fakeWriter;
 
     @Before
     public void setUp() {
-        app = new TemperatureConverter();
+        temperatureConverter = new TemperatureConverter();
         fakeReader = new FakeReadWriter();
         fakeWriter = new FakeReadWriter();
-        app.setReader(fakeReader);
-        app.setWriter(fakeWriter);
+        temperatureConverter.setReader(fakeReader);
+        temperatureConverter.setWriter(fakeWriter);
+
+        applicationRunner = new ApplicationRunner(temperatureConverter);
     }
 
     @Test
     public void ItReturnsRightCelciusForFarenheitOfFreezing() {
-        double celsius = app.ConvertToCelsius(32);
+        double celsius = temperatureConverter.ConvertToCelsius(32);
 
         assertEquals(0, celsius, 0.001);
     }
 
     @Test
     public void ItReturnsRightCelciusForBoiling() {
-        double celsius = app.ConvertToCelsius(212);
+        double celsius = temperatureConverter.ConvertToCelsius(212);
 
         assertEquals(100.0, celsius, 0.001);
     }
 
     @Test
     public void ItWritesNothingOnExecuteWhenReaderIsEmpty() throws Exception {
-        app.execute();
+        applicationRunner.execute();
 
         assertEquals("converter exit", fakeWriter.readLine());
     }
@@ -41,7 +45,7 @@ public class TemperatureConverterTest {
     public void ItWritesOneConversionWhenTheReaderHasOneConversion() throws Exception {
         fakeReader.addLine("32");
 
-        app.execute();
+        applicationRunner.execute();
 
         assertEquals("F=32.0, C=0.0", fakeWriter.readLine());
         assertEquals("converter exit", fakeWriter.readLine());
@@ -52,7 +56,7 @@ public class TemperatureConverterTest {
         fakeReader.addLine("32");
         fakeReader.addLine("212");
 
-        app.execute();
+        applicationRunner.execute();
 
         assertEquals("F=32.0, C=0.0", fakeWriter.readLine());
         assertEquals("F=212.0, C=100.0", fakeWriter.readLine());

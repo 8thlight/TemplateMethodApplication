@@ -1,48 +1,63 @@
-abstract class ApplicationRunner {
-    private boolean isDone;
+interface ApplicationInterface {
+    public void idle(ApplicationRunner applicationRunner) throws Exception;
+    public void cleanup();
+}
 
-    public ApplicationRunner() {
+class ApplicationRunner {
+    private boolean isDone;
+    private ApplicationInterface app;
+
+    public ApplicationRunner(ApplicationInterface app) {
+        this.app = app;
         isDone = false;
     }
 
     public boolean isDone() {
         return isDone;
     }
-
     public void setToDone() {
         isDone = true;
     }
+
+    public void execute() throws Exception {
+        while (!isDone())
+            app.idle(this);
+        app.cleanup();
+    }
 }
 
-public class TemperatureConverter extends ApplicationRunner {
+public class TemperatureConverter implements ApplicationInterface {
 
     private Reader reader;
     private Writer writer;
 
     public static void main(String [] args) throws Exception
     {
-        TemperatureConverter app = new TemperatureConverter();
+        TemperatureConverter tcvr = new TemperatureConverter();
+        ApplicationRunner app = new ApplicationRunner(tcvr);
+
         app.execute();
     }
 
     public TemperatureConverter() {
-        super();
         reader = new ReaderFromStdIn();
         writer = new WriterToStdOut();
     }
 
-    public void execute() throws Exception
+    @Override
+    public void idle(ApplicationRunner runner) throws Exception
     {
-        String line;
-        while(!isDone()) {
-            line = reader.readLine();
-            if (line == null)
-                setToDone();
-            else {
-                double fahrenheit = Double.parseDouble(line);
-                writer.writeLine("F=" + fahrenheit + ", C=" + ConvertToCelsius(fahrenheit));
-            }
+        String line = reader.readLine();
+        if (line == null)
+            runner.setToDone();
+        else {
+            double fahrenheit = Double.parseDouble(line);
+            writer.writeLine("F=" + fahrenheit + ", C=" + ConvertToCelsius(fahrenheit));
         }
+    }
+
+    @Override
+    public void cleanup() {
         writer.writeLine("converter exit");
     }
 
