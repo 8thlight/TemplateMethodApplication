@@ -14,18 +14,18 @@ abstract class ApplicationRunner {
     }
 }
 
-public class Application extends ApplicationRunner {
+public class TemperatureConverter extends ApplicationRunner {
 
     private Reader reader;
     private Writer writer;
 
     public static void main(String [] args) throws Exception
     {
-        Application app = new Application();
+        TemperatureConverter app = new TemperatureConverter();
         app.execute();
     }
 
-    public Application() {
+    public TemperatureConverter() {
         super();
         reader = new ReaderFromStdIn();
         writer = new WriterToStdOut();
