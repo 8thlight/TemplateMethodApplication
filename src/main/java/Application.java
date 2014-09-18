@@ -1,7 +1,20 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+abstract class ApplicationRunner {
+    private boolean isDone;
 
-public class Application {
+    public ApplicationRunner() {
+        isDone = false;
+    }
+
+    public boolean isDone() {
+        return isDone;
+    }
+
+    public void setToDone() {
+        isDone = true;
+    }
+}
+
+public class Application extends ApplicationRunner {
 
     private Reader reader;
     private Writer writer;
@@ -13,6 +26,7 @@ public class Application {
     }
 
     public Application() {
+        super();
         reader = new ReaderFromStdIn();
         writer = new WriterToStdOut();
     }
@@ -20,9 +34,14 @@ public class Application {
     public void execute() throws Exception
     {
         String line;
-        while((line = reader.readLine()) != null) {
-            double fahrenheit = Double.parseDouble(line);
-            writer.writeLine("F=" + fahrenheit + ", C=" + ConvertToCelsius(fahrenheit));
+        while(!isDone()) {
+            line = reader.readLine();
+            if (line == null)
+                setToDone();
+            else {
+                double fahrenheit = Double.parseDouble(line);
+                writer.writeLine("F=" + fahrenheit + ", C=" + ConvertToCelsius(fahrenheit));
+            }
         }
         writer.writeLine("converter exit");
     }
